@@ -3,6 +3,7 @@ import './App.scss';
 
 function getRandomName(): string {
   const value = Date.now().toString().slice(-4);
+
   return `Clock-${value}`;
 }
 
@@ -20,6 +21,7 @@ export class App extends React.Component<{}, State> {
   };
 
   private timerId: number | null = null;
+
   private timerUpdate: number | null = null;
 
   handleContexMenu = (event: MouseEvent) => {
@@ -28,22 +30,19 @@ export class App extends React.Component<{}, State> {
   };
 
   handleClick = () => {
-    this.setState({ hasClock: true, today: new Date() });
+    this.setState({ hasClock: true });
   };
 
   componentDidMount(): void {
-
     this.timerId = window.setInterval(() => {
       this.setState({ clockName: getRandomName() });
     }, 3300);
-
 
     this.startTimeUpdateInterval();
 
     document.addEventListener('contextmenu', this.handleContexMenu);
     document.addEventListener('click', this.handleClick);
   }
-
 
   startTimeUpdateInterval = () => {
     if (this.timerUpdate) {
@@ -53,8 +52,9 @@ export class App extends React.Component<{}, State> {
     this.timerUpdate = window.setInterval(() => {
       if (this.state.hasClock) {
         const currentTime = new Date();
-        this.setState({ today: currentTime });
 
+        this.setState({ today: currentTime });
+        // eslint-disable-next-line no-console
         console.log(currentTime.toUTCString().slice(-12, -4));
       }
     }, 1000);
@@ -62,10 +62,12 @@ export class App extends React.Component<{}, State> {
 
   componentDidUpdate(prevProps: {}, prevState: Readonly<State>): void {
     if (this.state.clockName !== prevState.clockName && this.state.hasClock) {
-      console.warn(`Renamed from ${prevState.clockName} to ${this.state.clockName}`);
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Renamed from ${prevState.clockName} to ${this.state.clockName}`,
+      );
     }
 
-    
     if (!prevState.hasClock && this.state.hasClock) {
       this.startTimeUpdateInterval();
     }
@@ -75,6 +77,7 @@ export class App extends React.Component<{}, State> {
     if (this.timerId) {
       window.clearInterval(this.timerId);
     }
+
     if (this.timerUpdate) {
       window.clearInterval(this.timerUpdate);
     }
